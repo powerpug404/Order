@@ -1,5 +1,10 @@
 // Vercel serverless endpoint. OPENAI_API_KEY is configured in Vercel, never in Vite.
 export default async function handler(req: any, res: any) {
+  const origin = req.headers.origin;
+  if (origin === 'https://powerpug404.github.io' || origin === 'https://order-one-bay.vercel.app') { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST.' });
   const key = process.env.OPENAI_API_KEY;
   if (!key) return res.status(503).json({ error: 'AI is not configured yet. Add OPENAI_API_KEY in Vercel.' });
