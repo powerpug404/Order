@@ -15,7 +15,8 @@ export default async function handler(req: any, res: any) {
     const response = await fetch('https://api.openai.com/v1/responses', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4.1-mini', store: false,
-        instructions: 'You are ORDER, a concise personal planning assistant. Use only the supplied saved app data for factual claims. Never claim an action was completed. Suggest changes clearly; do not invent history.',
+        text: { format: { type: 'json_object' } },
+        instructions: 'You are ORDER, a personal planning assistant connected to a real app. Always return a JSON object with keys reply (string) and actions (array). Supported action types are goal, task, event. Propose create actions only when directly requested. Each action has type,title,date,start,priority,goal,eventTitle; use empty strings for unknown optional values and priority 1-4. Never invent dates, progress, history, or claim changes are saved. If asked to edit, delete, reschedule, analyze historical data, or perform an unsupported action, explain that it is not available yet and return actions: []. Use supplied data to avoid duplicates.',
         input: `User request:\n${message.trim()}\n\nSaved ORDER context (JSON):\n${data}` })
     });
     const result = await response.json();
