@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseICS} from '../src/ics.ts';
+
+test('parses all-day events without timezone shifting',()=>{const [event]=parseICS('BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:one\r\nSUMMARY:All day\r\nDTSTART;VALUE=DATE:20261225\r\nDTEND;VALUE=DATE:20261226\r\nEND:VEVENT\r\nEND:VCALENDAR');assert.equal(event.date,'2026-12-25');assert.equal(event.endDate,'2026-12-25');assert.equal(event.allDay,true);assert.equal(event.start,'')});
+test('parses timed event details and weekly recurrence',()=>{const [event]=parseICS('BEGIN:VEVENT\nUID:two\nSUMMARY:Team\nDTSTART;TZID=America/Chicago:20261201T090000\nDTEND;TZID=America/Chicago:20261201T100000\nLOCATION:Office\nRRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TU,TH;COUNT=4\nEXDATE;TZID=America/Chicago:20261215T090000\nEND:VEVENT');assert.equal(event.start,'09:00');assert.equal(event.end,'10:00');assert.equal(event.location,'Office');assert.equal(event.recurrence?.interval,2);assert.deepEqual(event.recurrence?.weekdays,[2,4]);assert.equal(event.recurrence?.count,4);assert.deepEqual(event.exdates,['2026-12-15'])});
+test('returns no records for invalid or empty calendar data',()=>{assert.deepEqual(parseICS(''),[]);assert.deepEqual(parseICS('BEGIN:VCALENDAR\nEND:VCALENDAR'),[])});
+
+test('merges recurrence exceptions into the master series',()=>{const parsed=parseICS('BEGIN:VEVENT\nUID:series\nSUMMARY:Weekly\nDTSTART:20261201T090000Z\nRRULE:FREQ=WEEKLY\nEND:VEVENT\nBEGIN:VEVENT\nUID:series\nRECURRENCE-ID:20261208T090000Z\nSUMMARY:Moved meeting\nDTSTART:20261208T110000Z\nDTEND:20261208T120000Z\nEND:VEVENT');assert.equal(parsed.length,1);assert.equal(parsed[0].overrides?.['2026-12-08']?.title,'Moved meeting')});
+test('preserves explicit RDATE additions',()=>{const [event]=parseICS('BEGIN:VEVENT\nUID:rdate\nSUMMARY:Extra\nDTSTART;VALUE=DATE:20261201\nRRULE:FREQ=MONTHLY\nRDATE;VALUE=DATE:20261215,20261220\nEND:VEVENT');assert.deepEqual(event.recurrence?.rdates,['2026-12-15','2026-12-20'])});
