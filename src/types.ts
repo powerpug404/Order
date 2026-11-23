@@ -1,7 +1,7 @@
 export type Cal = {id:string;name:string;color:string;visible:boolean;isDefault:boolean};
-export type Task = {id:string;title:string;date:string;time:string;duration:number;priority:number;goal:string;calendar:string;done:boolean;postponed:number;notes?:string};
-export type EventItem = {id:string;title:string;date:string;start:string;end:string;calendar:string;notes?:string;goal?:string;location?:string};
+export type Task = {id:string;title:string;date:string;time:string;duration:number;priority:number;priorityLevel?:1|2|3|4;goal:string;calendar:string;done:boolean;postponed:number;showToday?:boolean;showCalendar?:boolean;description?:string;endTime?:string;milestone?:string;eventId?:string;project?:string;notes?:string};
+export type EventItem = {id:string;title:string;date:string;start:string;end:string;calendar:string;notes?:string;goal?:string;location?:string;taskIds?:string[]};
 export type Goal = {id:string;name:string;category:string;description:string;priority:number;target:string;progress:number;milestones:string[]};
 export type Capture = {id:string;text:string;date:string};
 export type Entry = {id:string;project:string;start:string;end:string;notes:string;goal:string};
-export type State = {calendars:Cal[];tasks:Task[];events:EventItem[];goals:Goal[];captures:Capture[];entries:Entry[];settings:{name:string;workDays:string[];restDay:string;accountability:string;notifications:boolean;theme:string;vacation:boolean};streak:number;longest:number;restHonored:number};
+export type State = {calendars:Cal[];tasks:Task[];events:EventItem[];goals:Goal[];captures:Capture[];entries:Entry[];settings:{name:string;workDays:string[];restDay:string;accountability:string;notifications:boolean;theme:string;vacation:boolean};streak:number;longest:number;restHonored:number;schemaVersion?:number;activeTimer?:{taskId?:string;project:string;start:string;goal:string}};
