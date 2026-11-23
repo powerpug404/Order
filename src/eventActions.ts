@@ -1,0 +1,4 @@
+import type {EventItem} from './types';
+export type EventDeleteScope='occurrence'|'future'|'series';
+const shift=(s:string,n:number)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+export function deleteEventRecord(events:EventItem[],event:EventItem,scope:EventDeleteScope):EventItem[]{const id=event.seriesId||event.id,master=events.find(x=>x.id===id);if(!master)return events;if(!master.recurrence)return events.filter(x=>x.id!==id);if(scope==='series')return events.filter(x=>x.id!==id);const occurrence=event.occurrenceDate||event.date;if(scope==='occurrence')return events.map(x=>x.id===id?{...x,excludedDates:[...new Set([...(x.excludedDates||[]),occurrence])]}:x);return events.map(x=>x.id===id?{...x,recurrence:{...x.recurrence!,until:shift(occurrence,-1)}}:x)}
