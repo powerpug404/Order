@@ -7,3 +7,5 @@
 
 /* Simplified Home command center */
 .home-actions{display:flex;gap:10px;margin-top:18px}.home-actions .primary{min-height:48px;padding:0 20px;background:#71866b;color:#fff;border:0;border-radius:14px;font-weight:650}.command-bar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin:22px 0 26px;padding:14px 17px;border:1px solid #39433d;border-radius:18px;background:#171c19;color:#adbb9e}.command-bar input{min-width:0;background:transparent;border:0;outline:0;color:#f5f2e9;font:inherit}.command-bar input::placeholder{color:#89928b}.command-bar>button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:12px;background:#71866b;color:white}.command-bar small{grid-column:2/4;color:#929a92;font-size:11px}.bottom-nav{grid-template-columns:repeat(3,1fr)}
+
+.command-bar>button.voice-button,.command-bar>button.listening{background:#26352d;color:#c6d5bf;border:1px solid #526955}.command-bar>button.listening{background:#8e594d;color:#fff;animation:voice-pulse 1.2s infinite alternate}@keyframes voice-pulse{to{box-shadow:0 0 0 5px #8e594d33}}
