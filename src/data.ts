@@ -7,5 +7,5 @@ export const seed:State={
  goals:[],
  captures:[],
  entries:[],
- settings:{name:'Alex Morgan',workDays:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],restDay:'Sunday',accountability:'Balanced',notifications:true,theme:'Dark',vacation:false},streak:12,longest:24,restHonored:18
+ settings:{name:'Alex Morgan',workDays:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],restDay:'Sunday',accountability:'Balanced',notifications:true,theme:'Dark',vacation:false,dailyCapacityMinutes:240},streak:12,longest:24,restHonored:18
 };
