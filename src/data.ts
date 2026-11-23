@@ -7,5 +7,6 @@ export const seed:State={
  goals:[],
  captures:[],
  entries:[],
+ timeCategories:[{id:'focus',name:'Focus',color:'#9BAA88'}],
  settings:{name:'Alex Morgan',workDays:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],restDay:'Sunday',accountability:'Balanced',notifications:true,theme:'Dark',vacation:false,dailyCapacityMinutes:240},streak:12,longest:24,restHonored:18
 };
