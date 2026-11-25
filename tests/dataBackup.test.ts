@@ -9,15 +9,28 @@ function memoryStorage(initial:Record<string,string>={}){
 }
 
 test('backup includes app-owned auxiliary records and restores the full state',()=>{
-  const storage=memoryStorage({'order-review-history':'[{"id":"review-1"}]','unrelated':'keep'});
+  const storage=memoryStorage({
+    'order-review-history':'[{"id":"review-1"}]',
+    'order-home-default-tab':'Tasks',
+    'order-home-dashboard-v3':'[{"id":"widget-1","type":"tasks","span":1,"config":{}}]',
+    'order-home-tab-order':'["All","Events","Tasks","Goals"]',
+    'order-reschedule-history':'[{"id":"reschedule-1"}]',
+    'unrelated':'keep',
+  });
   const state=structuredClone(seed);
   const backup=createBackup(state,storage,new Date('2026-01-02T03:04:05Z'));
   assert.equal(backup.format,'order-local-backup');
   assert.equal(backup.auxiliary['order-review-history'] instanceof Array,true);
+  assert.equal(backup.auxiliary['order-home-default-tab'],'Tasks');
+  assert.equal((backup.auxiliary['order-home-dashboard-v3'] as any[])[0].id,'widget-1');
   const target=memoryStorage({'order-prototype-v1':'old'});
   const restored=restoreBackup(backup,target);
   assert.deepEqual(restored,state);
   assert.equal(target.getItem('order-review-history'),'[{"id":"review-1"}]');
+  assert.equal(target.getItem('order-home-default-tab'),'Tasks');
+  assert.equal(target.getItem('order-home-dashboard-v3'),'[{"id":"widget-1","type":"tasks","span":1,"config":{}}]');
+  assert.equal(target.getItem('order-home-tab-order'),'["All","Events","Tasks","Goals"]');
+  assert.equal(target.getItem('order-reschedule-history'),'[{"id":"reschedule-1"}]');
   assert.equal(JSON.parse(target.getItem('order-prototype-v1')!).schemaVersion,state.schemaVersion);
 });
 

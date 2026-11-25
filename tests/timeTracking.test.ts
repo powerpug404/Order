@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {finalizeTimerEntry} from '../src/timeTracking.ts';
+import {elapsedSeconds,finalizeTimerEntry} from '../src/timeTracking.ts';
+
+test('elapsed Clock time is recomputed from the saved start instant after a long pause',()=>{
+ const start='2026-11-25T15:00:00.000Z';
+ assert.equal(elapsedSeconds(start,Date.parse(start)+6_000_000),6000);
+ assert.equal(elapsedSeconds(start,Date.parse(start)-1000),0);
+ assert.equal(elapsedSeconds('invalid',Date.parse(start)),0);
+});
 
 test('stopping a task timer preserves task and project associations',()=>{
  const entry=finalizeTimerEntry({categoryId:'focus',project:'Website',projectId:'project-1',taskId:'task-1',start:'2026-11-25T15:00:00.000Z'},[{id:'focus',name:'Focus',color:'#71856A'}],'2026-11-25T15:45:00.000Z','entry-1');

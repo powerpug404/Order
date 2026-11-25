@@ -7,8 +7,11 @@ export const ORDER_STORAGE_KEYS = [
   'order-prototype-v1', 'order-daily-choices', 'order-organization-preview',
   'order-organization-ids', 'order-ai-action-session', 'order-ai-action-history',
   'order-review-history', 'order-search-history', 'order-notification-preferences',
-  'order-notifications',
+  'order-notifications', 'order-home-default-tab', 'order-home-tab-order',
+  'order-home-widgets', 'order-home-dashboard-v2', 'order-home-dashboard-v3',
+  'order-reschedule-history',
 ] as const;
+const RAW_VALUE_KEYS = new Set<string>(['order-home-default-tab']);
 
 export type OrderBackup = {
   format: typeof BACKUP_FORMAT;
@@ -69,7 +72,7 @@ export function createBackup(state: State, storage: Pick<Storage, 'getItem'>, no
     if (key === 'order-prototype-v1') continue;
     const raw = storage.getItem(key);
     if (raw === null) continue;
-    try { auxiliary[key] = JSON.parse(raw); }
+    try { auxiliary[key] = RAW_VALUE_KEYS.has(key) ? raw : JSON.parse(raw); }
     catch { throw new Error(`ORDER could not export ${key} because its saved data is damaged. Resolve that storage issue before exporting.`); }
   }
   const backup: OrderBackup = {
@@ -86,7 +89,7 @@ export function createBackup(state: State, storage: Pick<Storage, 'getItem'>, no
 export function restoreBackup(backupValue: unknown, storage: Pick<Storage, 'setItem' | 'removeItem'>): State {
   const backup = validateBackup(backupValue);
   // Validate and serialize every write first so malformed input cannot cause a partial restore.
-  const writes = Object.entries(backup.auxiliary).filter(([key]) => (ORDER_STORAGE_KEYS as readonly string[]).includes(key) && key !== 'order-prototype-v1').map(([key, value]) => [key, JSON.stringify(value)] as const);
+  const writes = Object.entries(backup.auxiliary).filter(([key]) => (ORDER_STORAGE_KEYS as readonly string[]).includes(key) && key !== 'order-prototype-v1').map(([key, value]) => [key, RAW_VALUE_KEYS.has(key) ? String(value) : JSON.stringify(value)] as const);
   const stateJson = JSON.stringify(backup.state);
   const prior = new Map<string, string | null>();
   const readable = storage as Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
