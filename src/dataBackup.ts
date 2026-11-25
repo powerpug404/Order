@@ -27,10 +27,10 @@ function isObject(value: unknown): value is Record<string, any> {
 }
 
 export function validateBackup(value: unknown): OrderBackup {
-  if (!isObject(value) || value.format !== BACKUP_FORMAT || value.formatVersion !== BACKUP_VERSION || !Number.isFinite(value.dataVersion) || !isObject(value.state)) {
+  if (!isObject(value) || value.format !== BACKUP_FORMAT || value.formatVersion !== BACKUP_VERSION || !Number.isInteger(value.dataVersion) || value.dataVersion < 1 || typeof value.exportedAt !== 'string' || !Number.isFinite(Date.parse(value.exportedAt)) || !isObject(value.state)) {
     throw new Error('This file is not a supported ORDER backup.');
   }
-  const state = value.state;
+  const state: Record<string, any> = { ...value.state };
   // Phase 9.5 backups predate the Phase 10 records. Keep them restorable as an empty project layer.
   if (Number(value.dataVersion) < 10) {
     if (state.projects === undefined) state.projects = [];
@@ -40,7 +40,8 @@ export function validateBackup(value: unknown): OrderBackup {
   for (const key of arrays) {
     if (!Array.isArray(state[key])) throw new Error(`The backup is missing valid ${key} data.`);
     if (state[key].length > 50000) throw new Error(`The backup contains too many ${key} records.`);
-    const ids = state[key].map((row: any) => row?.id).filter((id: any) => typeof id === 'string');
+    if (state[key].some((row: any) => !isObject(row) || typeof row.id !== 'string' || !row.id.trim())) throw new Error(`The backup contains a record without a valid ID in ${key}.`);
+    const ids = state[key].map((row: any) => row.id);
     if (new Set(ids).size !== ids.length) throw new Error(`The backup has duplicate IDs in ${key}.`);
   }
   for (const project of state.projects) {
@@ -61,9 +62,13 @@ export function validateBackup(value: unknown): OrderBackup {
     throw new Error('The backup has invalid settings.');
   }
   if (!isObject(value.auxiliary)) throw new Error('The backup has invalid auxiliary data.');
-  const encoded = JSON.stringify(value);
+  for (const [key, item] of Object.entries(value.auxiliary)) {
+    if (item === undefined || (RAW_VALUE_KEYS.has(key) && typeof item !== 'string')) throw new Error(`The backup has invalid data for ${key}.`);
+  }
+  const normalized = { ...value, state };
+  const encoded = JSON.stringify(normalized);
   if (new TextEncoder().encode(encoded).length > MAX_BACKUP_BYTES) throw new Error('The backup is larger than ORDER can restore safely.');
-  return value as OrderBackup;
+  return normalized as OrderBackup;
 }
 
 export function createBackup(state: State, storage: Pick<Storage, 'getItem'>, now = new Date()): OrderBackup {

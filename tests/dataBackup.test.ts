@@ -42,10 +42,28 @@ test('backup validation rejects malformed structures and duplicate record IDs',(
   assert.throws(()=>validateBackup({format:'not-order'}),/supported ORDER backup/);
 });
 
+test('backup validation rejects records without nonblank stable IDs before restore',()=>{
+  const missing=createBackup(structuredClone(seed),memoryStorage());
+  (missing.state.tasks as any[]).push({title:'Incomplete task'});
+  assert.throws(()=>validateBackup(missing),/record without a valid ID in tasks/);
+  const blank=createBackup(structuredClone(seed),memoryStorage());
+  (blank.state.events as any[]).push({id:'  ',title:'Incomplete event'});
+  assert.throws(()=>restoreBackup(blank,memoryStorage()),/record without a valid ID in events/);
+});
+
+test('backup validation rejects malformed raw preference values',()=>{
+  const backup=createBackup(structuredClone(seed),memoryStorage());
+  backup.auxiliary['order-home-default-tab']={tab:'Tasks'};
+  assert.throws(()=>validateBackup(backup),/invalid data for order-home-default-tab/);
+});
+
 test('Phase 9 backups restore with empty Phase 10 collections',()=>{
   const state=structuredClone(seed) as any;
   delete state.projects;delete state.lifeAreas;state.schemaVersion=9;
   const previous={format:'order-local-backup',formatVersion:1,dataVersion:9,exportedAt:'2026-11-23T00:00:00.000Z',state,auxiliary:{}};
+  const normalized=validateBackup(previous);
+  assert.deepEqual(normalized.state.projects,[]);
+  assert.equal(state.projects,undefined,'validation must not mutate the imported backup object');
   const restored=restoreBackup(previous,memoryStorage());
   assert.deepEqual(restored.projects,[]);
   assert.deepEqual(restored.lifeAreas,[]);
