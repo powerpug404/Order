@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {eventOccurs,eventOn,saveEventRecord} from '../src/eventStore.ts';
+import {eventOccurs,eventOn,saveEventRecord,createEventRecord} from '../src/eventStore.ts';
 import {deleteEventRecord} from '../src/eventActions.ts';
 import type {EventItem} from '../src/types.ts';
 const base:EventItem={id:'series-1',title:'Team sync',date:'2026-11-23',start:'09:00',end:'10:00',calendar:'work',recurrence:{frequency:'daily',count:3}};
@@ -18,3 +18,11 @@ test('deleting a series removes only its master record',()=>{const other={...bas
 test('deleting a one-time event removes only that event',()=>{const once={...base,recurrence:undefined};assert.deepEqual(deleteEventRecord([once],once,'series'),[])});
 
 test('manual all-day events preserve date and multi-day end date',()=>{const allDay:EventItem={id:'all-day',title:'Holiday',date:'2026-12-25',endDate:'2026-12-26',start:'',end:'',allDay:true,calendar:'home'};const saved=saveEventRecord([],allDay);assert.equal(eventOn(saved[0],'2026-12-25')?.allDay,true);assert.equal(eventOn(saved[0],'2026-12-26')?.title,'Holiday');assert.equal(eventOn(saved[0],'2026-12-27'),null)});
+
+const draft=(overrides:Partial<EventItem>={}):EventItem=>({id:'ai-event',title:'Dentist',date:'2026-11-25',start:'14:30',end:'15:00',calendar:'personal',taskIds:[],...overrides});
+test('AI event creation persists, reloads, and is retrievable on its local calendar date',()=>{const result=createEventRecord([],draft(),['personal']);assert.equal(result.ok,true);if(!result.ok)return;assert.equal(result.created,true);const reloaded=JSON.parse(JSON.stringify(result.events)) as EventItem[];const visible=reloaded.filter(e=>e.calendar==='personal').map(e=>eventOn(e,'2026-11-25')).filter(Boolean);assert.equal(visible.length,1);assert.equal(visible[0]?.start,'14:30');assert.equal(visible[0]?.date,'2026-11-25')});
+test('event creation rejects invalid details and calendar ids without reserving a duplicate',()=>{assert.deepEqual(createEventRecord([],draft({date:'not-a-date'}),['personal']),{ok:false,reason:'invalid'});assert.deepEqual(createEventRecord([],draft(),['work']),{ok:false,reason:'calendar'});const retry=createEventRecord([],draft(),['personal']);assert.equal(retry.ok,true)});
+test('rapid repeated approval cannot create duplicate AI events',()=>{const first=createEventRecord([],draft(),['personal']);assert.equal(first.ok,true);if(!first.ok)return;const second=createEventRecord(first.events,draft({id:'other-id'}),['personal']);assert.equal(second.ok,true);if(!second.ok)return;assert.equal(second.created,false);assert.equal(second.events.length,1);assert.equal(second.event.id,'ai-event')});
+test('event IDs are made unique when a proposed ID collides',()=>{const existing=draft();const result=createEventRecord([existing],draft({title:'Different event'}),['personal'],()=> 'unique-id');assert.equal(result.ok,true);if(result.ok)assert.equal(result.event.id,'unique-id')});
+test('canceled duplicate titles do not block a new event',()=>{const canceled=draft({status:'canceled'});const result=createEventRecord([canceled],draft(),['personal']);assert.equal(result.ok,true);if(result.ok)assert.equal(result.created,true)});
+test('manual create, edit, and delete still use the same calendar query semantics',()=>{const manual={...draft({id:'manual',title:'Review'}),status:'scheduled' as const};const saved=saveEventRecord([],manual);assert.equal(eventOn(saved[0],'2026-11-25')?.title,'Review');const edited=saveEventRecord(saved,{...manual,title:'Updated review'});assert.equal(eventOn(edited[0],'2026-11-25')?.title,'Updated review');assert.deepEqual(deleteEventRecord(edited,edited[0],'series'),[])});
