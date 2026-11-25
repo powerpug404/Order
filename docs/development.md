@@ -45,6 +45,7 @@ GitHub Pages CI runs both the test suite and production build before deployment.
 - `tests/storage.test.ts`, `stateMigration.test.ts`, `dataBackup.test.ts`: key compatibility, version migration, import/export, and rollback.
 - `tests/portableCore.test.ts`: architectural guard against React/browser globals entering the portable modules.
 - `tests/notificationPlatform.test.ts`, `lifecyclePlatform.test.ts`: platform adapter contracts using fakes.
+- Time-zone-sensitive tests set their expected host time zone explicitly; the complete Node 22 suite has also been run with `TZ=UTC` to catch machine-dependent assumptions.
 
 ## Before adding a native adapter
 
