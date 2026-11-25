@@ -52,6 +52,7 @@ Have ready the Apple Account, current legal contact/name/address/phone, two-fact
 
 - Repository fit is confirmed: React 18 + Vite, React DOM/CSS, static asset build, and existing domain logic; no Capacitor/Expo dependencies or native project exist.
 - Apple enrollment and Capacitor requirements are linked above and were checked on the decision date. Recheck Apple's membership terms and Capacitor's supported Xcode/iOS matrix when arranging the Mac.
-- Web suite and production build passed after the current portability changes: 133 tests, 0 failures; `npm run build` succeeds.
+- Web suite and production build passed after the current portability changes: 135 tests, 0 failures; `npm run build` succeeds. Added spring-DST tests verify daily local wall-time recurrence and absolute Clock elapsed time across the America/Chicago transition.
+- Fall-back fold behavior, invalid/nonexistent imported local times, and close/reopen lifecycle remain unverified.
 - No actual iPhone, Xcode, TestFlight, native calendar, suspended notification, native persistence, or native VoiceOver test has occurred. This decision does not award an iOS-readiness verdict.
 - Do not proceed to Xcode until the Apple membership is active and the gates in Sequence step 4 have an owner and acceptance criteria.
