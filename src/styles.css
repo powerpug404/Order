@@ -120,6 +120,55 @@ html,body,#root{width:100%;max-width:100%;overflow-x:clip}
 .inner-tabs{min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
 .inner-tabs::-webkit-scrollbar{display:none}
 @media(max-width:400px){.header{padding-left:8px;padding-right:8px;gap:3px}.header .brand{gap:6px;padding:0}.header .brand b{font-size:11px;letter-spacing:1px}.header-context{display:none}.header-controls{gap:0}.header-controls .icon{height:31px;min-width:30px;width:30px}.header-controls [aria-label="ORDER AI action center"],.header-controls [aria-label="Daily and weekly reviews"],.header-controls [aria-label="Personalization settings"],.header-controls [aria-label="Settings"]{display:none}.header-controls .header-more{display:grid}.header-controls .add-main{height:32px;width:32px;min-width:32px;padding:0;font-size:0}.header-controls .add-main span{display:none}.main{padding-left:12px;padding-right:12px}.events-control{width:100%}.inner-tabs{flex:1}.search{flex:1 1 100%;max-width:none}}
+
+/* Mobile fit and touch targets. Keep the main controls usable without horizontal scrolling. */
+@media(max-width:600px){
+ .shell{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+ .header{gap:5px;min-width:0}
+ .header-controls .icon{min-width:40px;width:40px;height:40px}
+ .header-controls .notification-nav-button,.header-controls [aria-label="Daily and weekly reviews"],.header-controls [aria-label="Personalization settings"],.header-controls [aria-label="Settings"]{display:none}
+ .header-controls .header-more{display:grid}
+ .header-tools-menu{top:calc(100% - 3px);right:0;max-height:calc(100dvh - 90px);overflow:auto}
+ .main{min-width:0;width:100%;overflow-x:clip}
+ .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px;padding-left:6px;padding-right:6px}
+ .bottom-nav button{width:100%;min-width:0;padding:2px 1px}
+ .bottom-nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px!important}
+ .bottom-nav .nav-add{width:42px;height:42px;min-height:42px;margin:0 auto;align-self:center;padding:0}
+ .page-title,.title-row{min-width:0}
+ .page-title-actions,.project-head-actions{flex-wrap:wrap;justify-content:flex-start}
+ .card-grid{grid-template-columns:minmax(0,1fr)}
+ .form-grid{grid-template-columns:minmax(0,1fr)}
+ .form-grid .span-two,.form-grid .wide-label,.form-grid>.span-two{grid-column:1/-1}
+ .form-grid label{min-width:0;font-size:11px}
+ .form-grid input,.form-grid select,.form-grid textarea{min-height:42px;font-size:16px!important}
+ .sheet{width:100%;max-height:calc(100dvh - env(safe-area-inset-top));padding:16px 15px calc(18px + env(safe-area-inset-bottom));overscroll-behavior:contain}
+ .sheet-actions{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));z-index:2;flex-wrap:wrap;background:#1a1d18;padding:10px 0 calc(8px + env(safe-area-inset-bottom));margin-top:12px}
+ .sheet-actions button{min-height:44px;flex:1 1 auto}
+ .calendar-nav{flex-wrap:nowrap}
+ .cal-page .cal-toolbar>.segmented{max-width:100%;overflow-x:auto}
+ .month-grid{grid-template-rows:repeat(6,minmax(48px,auto))}
+ .month-cell{min-height:48px}
+ .month-cell small{display:none}
+ .cal-page .agenda-list{grid-template-columns:minmax(0,1fr)}
+ .events-control{min-width:0}
+ .inner-tabs{min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
+ .inner-tabs::-webkit-scrollbar{display:none}
+ .events-page,.actions-page,.action-history,.inbox-page,.timer-page,.project-center,.goals-center{min-width:0;max-width:100%}
+ .action-plan-card>footer{flex-wrap:wrap}
+ .action-plan-card>footer button{min-width:0}
+ .quick-task,.inline-form{min-width:0}
+ .quick-task input,.inline-form input{font-size:16px!important}
+}
+@media(max-width:380px){
+ .header .brand b{display:none}
+ .header-controls{gap:0}
+ .header-controls .icon{min-width:36px;width:36px}
+ .header-controls .add-main{width:38px;min-width:38px;height:38px}
+ .main{padding-left:10px;padding-right:10px}
+ .calendar-nav h2{font-size:9px;margin-inline:2px}
+ .cal-page .cal-toolbar{gap:3px}
+ .cal-page .cal-toolbar>.segmented button{padding:0 5px}
+}
 .reschedule-sheet{width:min(520px,100%);border-radius:16px 16px 0 0}.reschedule-prompt{margin:0 0 12px;color:#b7b6aa;font-size:12px;line-height:1.55}.reschedule-options{display:grid;gap:6px}.reschedule-options button{display:flex;align-items:center;justify-content:space-between;gap:9px;min-height:46px;padding:0 11px;border:1px solid #383b31;border-radius:8px;background:#20221d;color:#dedfd4;text-align:left;font-size:12px}.reschedule-options button svg{flex:none;color:#9cab8d}.reschedule-foot{display:flex;justify-content:space-between;gap:8px;margin-top:13px;padding-top:10px;border-top:1px solid #34362e}.reschedule-foot button{min-height:40px}.reschedule-sheet>.quiet{margin-top:12px;min-height:40px}@media(min-width:800px){.reschedule-backdrop{align-items:center;padding:20px}.reschedule-sheet{border:1px solid #3b4035;border-radius:14px;max-height:88vh}}@media(max-width:600px){.reschedule-sheet{padding:17px 16px calc(18px + env(safe-area-inset-bottom));max-height:90dvh}.reschedule-options button{min-height:48px;font-size:13px}.reschedule-foot{flex-direction:column}.reschedule-foot button{justify-content:center}}
 .timer-page .stopwatch-card{position:relative;overflow:hidden}.timer-page .stopwatch-top>small{max-width:45%;text-align:right;line-height:1.4}.timer-entry-meta>b{overflow-wrap:anywhere}
 @media(max-width:600px){.cal-page{min-width:0}.cal-page .page-title{flex-wrap:wrap;align-items:flex-start}.cal-page .page-title>div{flex:1 1 100%}.cal-toolbar{flex-wrap:wrap;height:auto;min-height:52px;padding:7px;gap:5px}.cal-toolbar>.today-btn{order:3}.calendar-nav{min-width:0;flex:1;justify-content:center}.calendar-nav h2{white-space:nowrap}.cal-toolbar>.segmented{flex:none}.cal-page .agenda:not(.one-day){grid-template-columns:minmax(0,1fr);min-height:0;max-height:68dvh;overflow-y:auto;overscroll-behavior:contain}.cal-page .agenda-day{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:start;border-right:0;border-bottom:1px solid #2a2e27}.cal-page .agenda-date{height:auto;min-height:58px;display:grid;align-content:center;gap:4px;border:0}.cal-page .agenda-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));min-width:0;padding:5px;gap:4px}.cal-page .agenda-item{min-width:0;margin:0}.cal-page .agenda-empty{min-height:50px}.timer-page .stopwatch-card{padding:20px 15px}.timer-page .stopwatch-readout{font-size:clamp(34px,12vw,54px)}.timer-page .stopwatch-top{flex-wrap:wrap}.timer-page .stopwatch-top>small{flex:1 1 100%;max-width:none;text-align:left}}
@@ -192,3 +241,5 @@ button.primary,button.add-main{background:var(--color-primary);color:var(--color
 .confirm-dialog{width:min(440px,calc(100vw - 28px));max-width:440px;padding:20px;border:1px solid var(--line);border-radius:var(--radius-3);background:var(--surface);box-shadow:0 24px 70px #0009}.confirm-dialog .sheet-head{margin:0 0 14px}.confirm-dialog .sheet-head h2{margin:0 0 5px;font:600 18px Manrope}.confirm-dialog .sheet-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.confirm-input-label{display:grid;gap:6px;margin:12px 0;color:var(--muted);font-size:12px}.confirm-input-label input{min-height:42px;padding:0 11px;background:var(--surface-2);color:var(--text)}.confirm-dialog .sheet-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.confirm-dialog .sheet-actions button{min-width:84px}
 
 .page-title-actions,.project-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:none}.project-head-actions{flex-wrap:wrap}@media(max-width:600px){.events-page>.page-title{flex-wrap:wrap;align-items:flex-start}.events-page>.page-title>div{flex:1 1 100%}.events-page>.page-title-actions{width:100%}.events-page>.page-title-actions>button{min-height:42px}.project-head-actions{width:100%;justify-content:stretch}.project-head-actions>button{flex:1}}
+
+.project-management .event-filters{display:none}.project-center-embedded{max-width:none;margin:0;padding:0;background:transparent}.project-center-embedded .project-page-head{display:none}
